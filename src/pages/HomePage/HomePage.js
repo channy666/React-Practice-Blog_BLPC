@@ -197,7 +197,12 @@ function HomePage() {
           {latestNewsTemplate.map((news) => {
             const { date, title, image, link } = news;
             return (
-              <a href={link || undefined} key={title} target="_blank">
+              <a
+                href={link || undefined}
+                key={title}
+                target="_blank"
+                rel="noreferrer"
+              >
                 <News $link={link}>
                   <NewsImage $image={image} />
                   <NewsInfo>
@@ -227,7 +232,13 @@ function HomePage() {
               {cooperationTemplate.map((coop) => {
                 const { name, link, image } = coop;
                 return (
-                  <a key={name} title={name} href={link} target="_blank">
+                  <a
+                    key={name}
+                    title={name}
+                    href={link}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     <Cooperation $image={image} />
                   </a>
                 );

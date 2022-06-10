@@ -105,7 +105,7 @@ function CreatePostPage() {
       setAuthToken("");
       navigate("/");
     }
-  }, []);
+  }, [user]);
 
   const handleSubmitPost = () => {
     setErrorMessage(null);
@@ -148,7 +148,7 @@ function CreatePostPage() {
 
   const handleCatagoryChange = useCallback((e) => {
     setSort(e.target.value.split("/"));
-  });
+  }, []);
 
   return (
     <Root>

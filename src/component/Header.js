@@ -200,11 +200,11 @@ function Header() {
 
   const handleMouseEnterNavPosts = useCallback(() => {
     setShowNavPosts(true);
-  });
+  }, []);
 
   const handleMouseLeaveNavPosts = useCallback(() => {
     setShowNavPosts(false);
-  });
+  }, []);
 
   const handleSearchBarChange = useCallback((e) => {
     setSearchBarValue(e.target.value);

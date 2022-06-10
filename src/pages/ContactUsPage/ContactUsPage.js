@@ -82,6 +82,7 @@ function ContactUsPage() {
                     href={link ? link : undefined}
                     key={content}
                     target="_blank"
+                    rel="noreferrer"
                   >
                     <Info>
                       <InfoImage $image={image} />

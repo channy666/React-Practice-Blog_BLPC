@@ -140,7 +140,7 @@ function ConferencePage() {
               會議記錄
             </Title>
             <Minute>
-              <a href={minute.url} target="_blank">
+              <a href={minute.url} target="_blank" rel="noreferrer">
                 {minute.title}
               </a>
             </Minute>
