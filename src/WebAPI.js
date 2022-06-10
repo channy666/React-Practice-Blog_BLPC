@@ -72,13 +72,13 @@ export const createPost = (title, body, sort) =>
     body: JSON.stringify({
       title,
       body,
-      catagory: sort[0],
+      category: sort[0],
       classification: sort[1],
     }),
   }).then((res) => res.json());
 
 export const getSearchPost = (value, page) => {
   return fetch(
-    `${BASE_URL}/posts?q=${value}&_expand=user&_page=${page}&_limit=10`
+    `${BASE_URL}/posts?q=${value}&_expand=user&_page=${page}&_limit=10&_sort=createdAt&_order=DESC`
   );
 };

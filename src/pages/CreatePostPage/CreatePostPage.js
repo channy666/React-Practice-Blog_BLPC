@@ -119,8 +119,9 @@ function CreatePostPage() {
       .then((data) => {
         if (data.ok === 0) {
           setErrorMessage(data.message);
-          // `code: 1` 代表使用者沒有發文權限
-          if (data.code === 1) {
+          scrollIntoViewRef.current.scrollIntoView();
+          // `code: 2` 代表使用者沒有發文權限
+          if (data.code === 2) {
             setUser(null);
             setAuthToken("");
             navigate("/");
@@ -128,12 +129,14 @@ function CreatePostPage() {
           return;
         }
         if (data.id) {
+          if (data.category === "Forum") {
+            return navigate(`/Forum/${data.id}`);
+          }
           navigate(`/Post/${data.id}`);
         }
       })
       .catch((err) => {
         setErrorMessage("伺服器錯誤，請稍後再試");
-        console.log(err);
         scrollIntoViewRef.current.scrollIntoView();
       });
   };
@@ -146,7 +149,7 @@ function CreatePostPage() {
     setErrorMessage(false);
   }, []);
 
-  const handleCatagoryChange = useCallback((e) => {
+  const handleCategoryChange = useCallback((e) => {
     setSort(e.target.value.split("/"));
   }, []);
 
@@ -166,7 +169,7 @@ function CreatePostPage() {
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             </PostTitle>
             <PostCatagory>
-              <select onChange={handleCatagoryChange}>
+              <select onChange={handleCategoryChange}>
                 <option value="" selected disabled hidden>
                   請選擇文章分類
                 </option>
