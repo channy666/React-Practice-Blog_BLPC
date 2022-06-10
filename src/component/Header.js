@@ -259,7 +259,7 @@ function Header() {
                 to="/Posts/Analysis"
                 $active={location.pathname === "/Posts/Analysis"}
               >
-                要聞評析
+                要文評析
               </NavPost>
             </NavPosts>
           </Navs>
