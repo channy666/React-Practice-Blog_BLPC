@@ -1,12 +1,14 @@
-import { useState, useEffect, memo } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, memo, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import { GeneralBlock, ErrorBlock } from "../../component/Blocks";
 import SideBar from "../../component/SideBar";
-import { getPost } from "../../WebAPI";
+import EditPostButtons from "../../component/EditPostButtons";
 import sort from "../../utils/sortPost";
+import { getPost } from "../../WebAPI";
+import { AuthContext } from "../../context";
 
 const Root = styled.div`
   display: flex;
@@ -21,7 +23,7 @@ const PostContainer = styled.div`
 `;
 
 const Post = styled.div`
-  padding: 50px 0px 50px 5vw;
+  padding: 40px 0px 50px 5vw;
   width: 90%;
   box-sizing: border-box;
 `;
@@ -29,7 +31,7 @@ const Post = styled.div`
 const PostTitle = styled.div`
   font-size: 30px;
   font-weight: bold;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
   color: #391d46;
   word-break: break-word;
   over-flow: wrap;
@@ -42,11 +44,13 @@ const PostInfo = styled.div`
   font-size: 16px;
   display: flex;
   align-items: center;
+  height: 40px;
 `;
 
 const PostDate = styled.div`
   flex-shrink: 0;
   color: black;
+  height: 100%;
   span {
     color: #701f74;
     letter-spacing: 2px;
@@ -56,10 +60,13 @@ const PostDate = styled.div`
 const PostAuthor = styled.div`
   margin-left: 30px;
   color: black;
+  height: 100%;
 
   span {
     font-weight: bold;
     color: #701f74;
+    overflow: scroll;
+    text-overflow: ellipsis;
   }
 `;
 
@@ -88,6 +95,7 @@ function PostPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [postData, setPostData] = useState();
+  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     setIsLoading(true);
@@ -132,12 +140,20 @@ function PostPage() {
                 full={true}
               >
                 <Post>
+                  {user && (
+                    <EditPostButtons
+                      postData={postData}
+                      userInfo={{ user, setUser }}
+                    />
+                  )}
                   <PostTitle>{postData.title}</PostTitle>
                   <PostInfo>
                     <PostDate>
                       發布日期：
                       <span>
-                        {new Date(postData.createdAt).toLocaleDateString()}
+                        {new Date(
+                          Number(postData.createdAt)
+                        ).toLocaleDateString()}
                       </span>
                     </PostDate>
                     <PostAuthor>

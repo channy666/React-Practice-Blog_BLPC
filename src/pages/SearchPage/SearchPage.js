@@ -155,7 +155,7 @@ function SearchPage() {
                 return (
                   <Post to={`${route}/${post.id}`} key={post.id}>
                     <PostDate>
-                      {new Date(post.createdAt).toLocaleDateString()}
+                      {new Date(Number(post.createdAt)).toLocaleDateString()}
                     </PostDate>
                     <PostInfo>
                       <PostTitle>{post.title}</PostTitle>

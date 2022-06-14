@@ -62,23 +62,35 @@ export const getMe = () =>
     },
   }).then((res) => res.json());
 
-export const createPost = (title, body, sort) =>
+export const createPost = (postData) =>
   fetch(`${BASE_URL}/posts`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: getAuthToken(),
     },
-    body: JSON.stringify({
-      title,
-      body,
-      category: sort[0],
-      classification: sort[1],
-    }),
+    body: JSON.stringify(postData),
   }).then((res) => res.json());
 
 export const getSearchPost = (value, page) => {
   return fetch(
     `${BASE_URL}/posts?q=${value}&_expand=user&_page=${page}&_limit=10&_sort=createdAt&_order=DESC`
   );
+};
+
+export const deletePost = (postId) => {
+  return fetch(`${BASE_URL}/posts/${postId}`, {
+    method: "DELETE",
+  }).then((res) => res.json());
+};
+
+export const updatePost = (id, newPostData) => {
+  return fetch(`${BASE_URL}/posts/${id}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      authorization: getAuthToken(),
+    },
+    body: JSON.stringify(newPostData),
+  }).then((res) => res.json());
 };

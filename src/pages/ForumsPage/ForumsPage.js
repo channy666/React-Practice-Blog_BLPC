@@ -113,7 +113,7 @@ function ForumsPage() {
                   <ForumTitle>{title}</ForumTitle>
                   <ForumInfo>
                     <ForumDate>
-                      {new Date(createdAt).toLocaleDateString()}
+                      {new Date(Number(createdAt)).toLocaleDateString()}
                     </ForumDate>
                     <ForumAuthor>
                       作者：<span>{user.nickname}</span>

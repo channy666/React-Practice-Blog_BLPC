@@ -129,7 +129,7 @@ function PostsPage() {
                   {posts.map((post) => (
                     <Post key={post.id} to={`/Post/${post.id}`}>
                       <PostDate>
-                        {new Date(post.createdAt).toLocaleDateString()}
+                        {new Date(Number(post.createdAt)).toLocaleDateString()}
                       </PostDate>
                       <PostTitle>{post.title}</PostTitle>
                     </Post>

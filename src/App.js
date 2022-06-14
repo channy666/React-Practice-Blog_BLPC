@@ -11,6 +11,7 @@ import ContactUsPage from "./pages/ContactUsPage/ContactUsPage";
 import ConferencesPage from "./pages/ConferencesPage";
 import CreatePostPage from "./pages/CreatePostPage/CreatePostPage";
 import LogInPage from "./pages/LogInPage/LogInPage";
+import EditPostPage from "./pages/EditPostPage";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import ConferencePage from "./pages/ConferencePage";
 import ForumsPage from "./pages/ForumsPage";
@@ -102,6 +103,7 @@ function App() {
             <Route path="/Forum/:id" element={<ForumPage />} />
             <Route path="/ContactUs" element={<ContactUsPage />} />
             <Route path="/CreatePost" element={<CreatePostPage />} />
+            <Route path="/EditPost/:id" element={<EditPostPage />} />
             <Route path="/Search/:value" element={<SearchPage />} />
             <Route path="/Login" element={<LogInPage />} />
             <Route path="*" element={<NotFoundPage />} />

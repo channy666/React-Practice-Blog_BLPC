@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { useState, useRef, useContext, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import SideBar from "../../component/SideBar";
 import { GeneralBlock } from "../../component/Blocks";
 import { AuthContext } from "../../context";
-import { createPost } from "../../WebAPI";
+import { updatePost, getPost } from "../../WebAPI";
 import { getAuthToken, setAuthToken } from "../../utils/authorization";
 
 const Root = styled.div`
@@ -92,49 +92,68 @@ const ErrorMessage = styled.div`
 
 function CreatePostPage() {
   const editorDataRef = useRef();
+  const oldPostDataRef = useRef();
+  const { id } = useParams();
   const scrollIntoViewRef = useRef();
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [sort, setSort] = useState("");
-  const { user, setUser } = useContext(AuthContext);
+  const [content, setContent] = useState("");
+  const { user, setUser, isConfirmingUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (isConfirmingUser) return;
     if (!getAuthToken() || !user) {
       setUser(null);
       setAuthToken("");
       navigate("/");
     }
-  }, [user]);
+  }, [user, isConfirmingUser]);
 
-  const handleSubmitPost = () => {
+  useEffect(() => {
+    if (isConfirmingUser) return;
+    getPost(id).then((data) => {
+      if (data.user.id !== user.id) {
+        setErrorMessage("您沒有編輯文章的權限！");
+        return;
+      }
+
+      setTitle(data.title);
+      setSort(`${data.category}/${data.classification}`);
+      setContent(data.body);
+      oldPostDataRef.current = data;
+    });
+  }, [isConfirmingUser, id, user.id]);
+
+  const handleSubmitUpdatePost = () => {
     setErrorMessage(null);
+
     if (!title || !editorDataRef.current.getData() || !sort) {
       setErrorMessage("標題、分類與內文皆不可為空");
       scrollIntoViewRef.current.scrollIntoView();
       return;
     }
 
-    const postData = {
+    const postSort = sort.split("/");
+    const { createdAt, userId } = oldPostDataRef.current;
+    const newPostData = {
       title,
-      body: editorDataRef.current.getData(),
-      category: sort[0],
-      classification: sort[1],
+      body: content,
+      category: postSort[0],
+      classification: postSort[1],
+      userId,
+      createdAt,
     };
 
-    createPost(postData)
+    if (userId !== user.id) {
+      setErrorMessage("您沒有編輯文章的權限！");
+      scrollIntoViewRef.current.scrollIntoView();
+      return;
+    }
+
+    updatePost(id, newPostData)
       .then((data) => {
-        if (data.ok === 0) {
-          setErrorMessage(data.message);
-          scrollIntoViewRef.current.scrollIntoView();
-          // `code: 2` 代表使用者沒有發文權限
-          if (data.code === 2) {
-            setUser(null);
-            setAuthToken("");
-            navigate("/");
-          }
-          return;
-        }
         if (data.id) {
           if (data.category === "Forum") {
             return navigate(`/Forum/${data.id}`);
@@ -148,7 +167,7 @@ function CreatePostPage() {
       });
   };
 
-  const handlePostTitle = useCallback((e) => {
+  const handleTitleChange = useCallback((e) => {
     setTitle(e.target.value);
   }, []);
 
@@ -157,29 +176,30 @@ function CreatePostPage() {
   }, []);
 
   const handleCategoryChange = useCallback((e) => {
-    setSort(e.target.value.split("/"));
+    setSort(e.target.value);
   }, []);
+
+  const handleContentChange = (event, editor) => {
+    setContent(editor.getData());
+  };
 
   return (
     <Root>
       <SideBar />
       <CreatePostContainer>
-        <GeneralBlock title="發布文章" titleWidth="160px">
+        <GeneralBlock title="更新文章" titleWidth="160px">
           <CreatePost ref={scrollIntoViewRef}>
             <PostTitle>
               <input
                 placeholder=" 請輸入文章標題"
-                onChange={handlePostTitle}
+                onChange={handleTitleChange}
                 value={title}
                 onFocus={handleFocus}
               />
               {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             </PostTitle>
             <PostCatagory>
-              <select onChange={handleCategoryChange}>
-                <option value="" selected disabled hidden>
-                  請選擇文章分類
-                </option>
+              <select onChange={handleCategoryChange} value={sort}>
                 <option value="Research/FinTech">{`研究觀點 > 金融科技`}</option>
                 <option value="Research/General">{`研究觀點 > 一般產業`}</option>
                 <option value="Analysis/FinTech">{`要文評析 > 金融科技`}</option>
@@ -191,15 +211,16 @@ function CreatePostPage() {
             <CKEditorContainer>
               <CKEditor
                 editor={ClassicEditor}
-                data={""}
+                data={content}
                 config={{ placeholder: "請輸入文章內容" }}
                 onReady={(editor) => {
                   editorDataRef.current = editor;
                 }}
                 onFocus={handleFocus}
+                onChange={handleContentChange}
               />
             </CKEditorContainer>
-            <SubmitButton onClick={handleSubmitPost}>發布</SubmitButton>
+            <SubmitButton onClick={handleSubmitUpdatePost}>發布</SubmitButton>
           </CreatePost>
         </GeneralBlock>
       </CreatePostContainer>

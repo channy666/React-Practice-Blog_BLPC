@@ -1,10 +1,13 @@
 import styled from "styled-components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SideBar from "../../component/SideBar";
+import EditPostButtons from "../../component/EditPostButtons";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import { getPost } from "../../WebAPI";
+import { getPost, getMe, deletePost } from "../../WebAPI";
+import { AuthContext } from "../../context";
+import { setAuthToken } from "../../utils/authorization";
 
 const Root = styled.div`
   display: flex;
@@ -72,6 +75,7 @@ function ForumPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState();
   const [error, setError] = useState(false);
+  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     setIsLoading(true);
@@ -94,6 +98,12 @@ function ForumPage() {
       {isLoading && !error && <Reminder>Loading...</Reminder>}
       {!error && !isLoading && forumData && (
         <ForumContainer>
+          {user && (
+            <EditPostButtons
+              postData={forumData}
+              userInfo={{ user, setUser }}
+            />
+          )}
           <ForumTitle>{forumData.title}</ForumTitle>
           <ForumInfo>
             <ForumDate>
