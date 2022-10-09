@@ -83,11 +83,8 @@ function App() {
       <Wrapper>
         <Router>
           <Warning>
-            {`注意！本網站為練習用網站，欲前往清華大學區塊鏈法律與政策研究中心 `}
-            <WarningLink
-              href="https://www.facebook.com/BlockchainLawcenter/"
-              target="_blank"
-            >
+            {`注意！本網站僅為個人練習用，不代表任何官方網站與立場，欲前往清華大學區塊鏈法律與政策研究中心 `}
+            <WarningLink href="https://blpc.site.nthu.edu.tw/" target="_blank">
               請按此
             </WarningLink>
           </Warning>
